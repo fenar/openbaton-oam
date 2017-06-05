@@ -1,5 +1,69 @@
 series: xenial
 services: 
+  ceph-mon:
+    charm: "cs:xenial/ceph-mon"
+    series: xenial
+    num_units: 3
+    options:
+      expected-osd-count: 3
+    annotations:
+      "gui-x": "750"
+      "gui-y": "500"
+    to:
+      - lxd:0
+      - lxd:1
+      - lxd:2
+  nova-compute-kvm:
+    charm: "cs:~openstack-charmers-next/xenial/nova-compute"
+    series: xenial
+    num_units: 9
+    options:
+      enable-live-migration: true
+      enable-resize: true
+      migration-auth-type: ssh
+      virt-type: kvm
+      openstack-origin: cloud:xenial-newton
+      libvirt-image-backend: qcow2
+    annotations:
+      "gui-x": "250"
+      "gui-y": "250"
+    to:
+      - "0"
+      - "1"
+      - "2"
+      - "7"
+      - "9"
+      - "4"
+      - "5"
+      - "6"
+      - "8"
+  ceph-osd:
+    charm: "cs:xenial/ceph-osd"
+    series: xenial
+    num_units: 3
+    options:
+      osd-devices: "/dev/sdb"
+      osd-reformat: "yes"
+    annotations:
+      "gui-x": "1000"
+      "gui-y": "500"
+    to:
+      - "0"
+      - "1"
+      - "2"
+  neutron-gateway:
+    charm: "cs:xenial/neutron-gateway"
+    series: xenial
+    num_units: 1
+    options:
+      bridge-mappings: physnet1:br-ex
+      data-port: br-ex:eth1
+      openstack-origin: cloud:xenial-newton
+    annotations:
+      "gui-x": "0"
+      "gui-y": "0"
+    to:
+      - "3"
   rabbitmq-server: 
     charm: "cs:~openstack-charmers/xenial/rabbitmq-server"
     series: xenial
@@ -8,18 +72,19 @@ services:
       gui-x: "500"
       gui-y: "250"
     to: 
-      - lxd:4
+      - lxd:3
   mysql: 
     charm: "cs:xenial/percona-cluster"
     series: xenial
     num_units: 1
     options: 
-      max-connections: 20000
+      max-connections: 1000
+      innodb-buffer-pool-size: 512M
     annotations: 
       gui-x: "0"
       gui-y: "250"
     to: 
-      - lxd:3
+      - lxd:7
   openstack-dashboard: 
     charm: "cs:xenial/openstack-dashboard"
     series: xenial
@@ -30,8 +95,9 @@ services:
     options:
       openstack-origin: cloud:xenial-newton
       webroot: "/"
+      ubuntu-theme: "no"
     to: 
-      - lxd:3
+      - lxd:8
   keystone: 
     charm: "cs:xenial/keystone"
     series: xenial
@@ -39,11 +105,12 @@ services:
     options: 
       admin-password: admin
       openstack-origin: cloud:xenial-newton
+      worker-multiplier: 0.25
     annotations: 
       gui-x: "500"
       gui-y: "0"
     to: 
-      - lxd:2
+      - lxd:7
   ceph-radosgw: 
     charm: "cs:xenial/ceph-radosgw"
     series: xenial
@@ -52,7 +119,7 @@ services:
       gui-x: "1000"
       gui-y: "250"
     to: 
-      - lxd:1
+      - lxd:8
   nova-cloud-controller: 
     charm: "cs:xenial/nova-cloud-controller"
     series: xenial
@@ -61,6 +128,8 @@ services:
       network-manager: Neutron
       console-access-protocol: novnc
       openstack-origin: cloud:xenial-newton
+      worker-multiplier: 0.25
+      scheduler-default-filters: "AggregateInstanceExtraSpecsFilter,NumInstancesFilter,AggregateNumInstancesFilter,RetryFilter,AvailabilityZoneFilter,CoreFilter,RamFilter,ComputeFilter,ComputeCapabilitiesFilter,ImagePropertiesFilter,ServerGroupAntiAffinityFilter,ServerGroupAffinityFilter,PciPassthroughFilter"
     annotations: 
       gui-x: "0"
       gui-y: "500"
@@ -74,11 +143,12 @@ services:
       neutron-security-groups: true
       flat-network-providers: physnet1
       openstack-origin: cloud:xenial-newton
+      worker-multiplier: 0.25
     annotations: 
       gui-x: "500"
       gui-y: "500"
     to: 
-      - lxd:2
+      - lxd:5
   glance: 
     charm: "cs:xenial/glance"
     series: xenial
@@ -88,66 +158,27 @@ services:
       "gui-y": "0"
     options:
       openstack-origin: cloud:xenial-newton
+      worker-multiplier: 0.25
     to: 
-      - lxd:4
-  ceph-mon: 
-    charm: "cs:xenial/ceph-mon"
-    series: xenial
-    num_units: 3
-    options: 
-      expected-osd-count: 3
-    annotations: 
-      "gui-x": "750"
-      "gui-y": "500"
-    to: 
-      - "0"
-      - "1"
-      - "2"
-  nova-compute-kvm:
-    charm: "cs:xenial/nova-compute"
-    series: xenial
-    num_units: 4
-    options:
-      enable-live-migration: true
-      enable-resize: true
-      migration-auth-type: ssh
-      virt-type: qemu
-      openstack-origin: cloud:xenial-newton
+      - lxd:6
+  glance-simplestreams-sync:
     annotations:
-      "gui-x": "250"
-      "gui-y": "250"
-    to:
-      - "0"
-      - "5"
-      - "6"
-      - "7"
-  ceph-osd: 
-    charm: "cs:xenial/ceph-osd"
-    series: xenial
-    num_units: 3
-    options: 
-      osd-devices: "/dev/sdb"
-      osd-reformat: "yes"
-    annotations: 
-      "gui-x": "1000"
-      "gui-y": "500"
-    to: 
-      - "3"
-      - "4"
-      - "5"
-  neutron-gateway: 
-    charm: "cs:xenial/neutron-gateway"
-    series: xenial
+      gui-x: '250'
+      gui-y: '0'
+    charm: cs:glance-simplestreams-sync
+    options:
+      mirror_list: |
+        [
+          {
+            url: 'http://cloud-images.ubuntu.com/releases/',
+            name_prefix: 'ubuntu:released',
+            path: 'streams/v1/index.sjson', max: 1,
+            item_filters: ['release~(trusty|xenial)', 'arch~(x86_64|amd64)', 'ftype~(disk1.img|disk.img|root.tar.xz)'],
+          },
+        ]
     num_units: 1
-    options: 
-      bridge-mappings: physnet1:br-ex
-      data-port: br-ex:eth1
-      openstack-origin: cloud:xenial-newton
-    annotations: 
-      "gui-x": "0"
-      "gui-y": "0"
-    to: 
-      - "3"
+    to:
+    - lxd:4
   neutron-openvswitch: 
     charm: "cs:xenial/neutron-openvswitch"
     series: xenial
@@ -164,14 +195,23 @@ services:
       openstack-origin: cloud:xenial-newton
       block-device: None
       glance-api-version: 2
+      worker-multiplier: 0.25
     to:
-    - lxd:1
+    - lxd:5
   cinder-ceph:
     annotations:
       gui-x: '750'
       gui-y: '250'
     charm: cs:xenial/cinder-ceph
     num_units: 0
+  heat:
+    charm: cs:xenial/heat
+    num_units: 1
+    options:
+      openstack-origin: cloud:xenial-newton
+      worker-multiplier: 0.25
+    to:
+    - lxd:9
   openbaton:
     charm: "./openbaton-charm"
     series: trusty
@@ -181,7 +221,7 @@ services:
       "gui-x": "0"
       "gui-y": "0"
     to:
-      - lxd:3
+    - lxd:10
 relations: 
   - - "openstack-dashboard:identity-service"
     - "keystone:identity-service"
@@ -253,28 +293,45 @@ relations:
     - "cinder-ceph:ceph"
   - - "openbaton:identity-credentials"
     - "keystone:identity-credentials"
+  - - "glance-simplestreams-sync:identity-service"
+    - "keystone:identity-service"
+  - - "heat:identity-service"
+    - "keystone:identity-service"
+  - - "heat:amqp"
+    - "rabbitmq-server:amqp"
+  - - "heat:shared-db"
+    - "mysql:shared-db"
 machines: 
   "0": 
     series: xenial
-    constraints: "arch=amd64 cpu-cores=4 mem=16384"
+    constraints: "arch=amd64 tags=2disk"
   "1": 
     series: xenial
-    constraints: "arch=amd64 cpu-cores=4 mem=16384"
+    constraints: "arch=amd64 tags=2disk"
   "2": 
     series: xenial
-    constraints: "arch=amd64 cpu-cores=4 mem=16384"
+    constraints: "arch=amd64 tags=2disk"
   "3": 
     series: xenial
-    constraints: "arch=amd64 cpu-cores=4 mem=16384"
+    constraints: "arch=amd64 tags=virtual"
   "4": 
     series: xenial
-    constraints: "arch=amd64 cpu-cores=4 mem=16384"
+    constraints: "arch=amd64 tags=physical"
   "5":
     series: xenial
-    constraints: "arch=amd64 cpu-cores=4 mem=16384"
+    constraints: "arch=amd64 tags=physical"
   "6":
     series: xenial
-    constraints: "arch=amd64 cpu-cores=4 mem=16384"
+    constraints: "arch=amd64 tags=physical"
   "7":
     series: xenial
-    constraints: "arch=amd64 cpu-cores=4 mem=16384"
+    constraints: "arch=amd64 tags=physical"
+  "8":
+    series: xenial
+    constraints: "arch=amd64 tags=physical"
+  "9":
+    series: xenial
+    constraints: "arch=amd64 tags=physical"
+  "10":
+    series: xenial
+    constraints: "arch=amd64 tags=physical"
