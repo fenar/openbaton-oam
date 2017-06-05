@@ -1,0 +1,9 @@
+clouds:
+    openstack:
+      type: openstack
+      auth-types: [userpass]
+      use-floating-ip: true
+      use-default-secgroup: true
+      regions:
+        RegionOne:
+            endpoint: %endpoint%

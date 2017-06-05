@@ -1,0 +1,61 @@
+# OpenBaton Deployment Guide with Juju on OrangeBox
+# Authors: 
+#         Fatih E. Nar (fenar)
+#         Giuseppe Carella (gc4rella)
+#	  Lorenzo Tomasini (lorenzotomasini)
+#
+
+Welcome to OpenBaton Demo!
+
+Prep:
+(1) Goto /sademos/NFV/OpenBaton then -> $ git clone https://github.com/openbaton/juju-charm openbaton-charm
+    NOTE: If we need to get developer $ branch-> $ git clone -b develop https://github.com/openbaton/juju-charm.git openbaton-charm
+(2) Goto /srv/data then -> $ wget https://owncloud.fokus.fraunhofer.de/index.php/s/YpkFNUdlXm8Lry0/download
+    rename file to openims.img
+(3) On Mikrotik Router:
+    (a) Go to IP -> Firewall
+    (b) Disable Rule#6 that causes packet drops.
+
+Order of Execution:
+(Step-0) Bootstrap Juju Controller: ./00-juju-controller-bootstrap.sh
+
+(Step-1) Deploy Openstack with Open Baton Inside: ./01-deploy-openstack.sh
+
+(Step-2) Make sure all OpenStack components are active checking "juju status", otherwise some provisioning calls won't work. 
+	 Provision Openstack with Sample Networks & Images: ./02-provision-openstack
+
+(Step-3) Provision Juju-VNFM with: ./04-provision-juju-vnfm.sh. 
+         Please be aware that this step may require quite a lot of time, as a juju bootstraps inside an OpenStack VM
+
+(Step-4) Go to:
+	 OpenBaton Web Portal http://<openbaton-ip>:8080 admin/openbaton
+         Zabbix Web Portal: http://<openbaton-ip>/zabbix/zabbix.php?action=dashboard.view
+
+(Step-5) Check VIM Registration Status: On OpenBaton Web GUI go to Manage-PoPs -> PoP-Instances -> Make sure you have your OB-Openstack Registered,
+	 in case the obcontroller vim does not show up, it is better to do: 
+		juju remove-relation keystone openbaton 
+		juju add-relation keystone openbaton
+
+(Step-6) Access the Open Baton Dashboard, go to Manage-PoPs -> PoP-Instances -> gen_datacenter and click the refresh status button.
+	 If the obcontroller datacenter is not there, you may need to trigger again the juju add-relation keystone openbaton
+
+	 # Monitoring VNFs deployed by Open Baton
+	 Each time you deploy network services, VMs exeucting VNFs will be automatically monitored by Zabbix. 
+	 Zabbix dashboard is available at  http://<openbaton-ip>/zabbix Admin/zabbix
+
+# deploy IMS using Generic VNFM
+(Step-7) Go to Catalogue --> Marketplace --> NSDs. Click on Downalod of NSD named: "OpenIMSCoreBind9FHoSS"
+
+(Step-8) Go to Catalogue --> NS Descriptors --> Click on action button of NSD with name "OpenIMSCore Bind9 FHoSS" --> Click Launch
+	 In the menu which pops up you don't need to select anything, just click Launch
+
+(Step-9) Go to Orchestrate NS --> NS records:
+	 The deployed Network Service should be in the list. If it goes in ERROR, you could see some more details in its sub menu
+
+(Step-10) Validate IMS: ongoing....
+		HSS-FE : http://fhoss-ip:8080/hss.web.console/
+		username: hssAdmin
+		password: hss
+               
+		Test User: alice@open-ims
+		Secret: alice

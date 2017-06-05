@@ -1,0 +1,280 @@
+series: xenial
+services: 
+  rabbitmq-server: 
+    charm: "cs:~openstack-charmers/xenial/rabbitmq-server"
+    series: xenial
+    num_units: 1
+    annotations: 
+      gui-x: "500"
+      gui-y: "250"
+    to: 
+      - lxd:4
+  mysql: 
+    charm: "cs:xenial/percona-cluster"
+    series: xenial
+    num_units: 1
+    options: 
+      max-connections: 20000
+    annotations: 
+      gui-x: "0"
+      gui-y: "250"
+    to: 
+      - lxd:3
+  openstack-dashboard: 
+    charm: "cs:xenial/openstack-dashboard"
+    series: xenial
+    num_units: 1
+    annotations: 
+      gui-x: "500"
+      gui-y: "-250"
+    options:
+      openstack-origin: cloud:xenial-newton
+      webroot: "/"
+    to: 
+      - lxd:3
+  keystone: 
+    charm: "cs:xenial/keystone"
+    series: xenial
+    num_units: 1
+    options: 
+      admin-password: admin
+      openstack-origin: cloud:xenial-newton
+    annotations: 
+      gui-x: "500"
+      gui-y: "0"
+    to: 
+      - lxd:2
+  ceph-radosgw: 
+    charm: "cs:xenial/ceph-radosgw"
+    series: xenial
+    num_units: 1
+    annotations: 
+      gui-x: "1000"
+      gui-y: "250"
+    to: 
+      - lxd:1
+  nova-cloud-controller: 
+    charm: "cs:xenial/nova-cloud-controller"
+    series: xenial
+    num_units: 1
+    options: 
+      network-manager: Neutron
+      console-access-protocol: novnc
+      openstack-origin: cloud:xenial-newton
+    annotations: 
+      gui-x: "0"
+      gui-y: "500"
+    to: 
+      - lxd:4
+  neutron-api: 
+    charm: "cs:xenial/neutron-api"
+    series: xenial
+    num_units: 1
+    options: 
+      neutron-security-groups: true
+      flat-network-providers: physnet1
+      openstack-origin: cloud:xenial-newton
+    annotations: 
+      gui-x: "500"
+      gui-y: "500"
+    to: 
+      - lxd:2
+  glance: 
+    charm: "cs:xenial/glance"
+    series: xenial
+    num_units: 1
+    annotations: 
+      "gui-x": "250"
+      "gui-y": "0"
+    options:
+      openstack-origin: cloud:xenial-newton
+    to: 
+      - lxd:4
+  ceph-mon: 
+    charm: "cs:xenial/ceph-mon"
+    series: xenial
+    num_units: 3
+    options: 
+      expected-osd-count: 3
+    annotations: 
+      "gui-x": "750"
+      "gui-y": "500"
+    to: 
+      - "0"
+      - "1"
+      - "2"
+  nova-compute-kvm:
+    charm: "cs:xenial/nova-compute"
+    series: xenial
+    num_units: 4
+    options:
+      enable-live-migration: true
+      enable-resize: true
+      migration-auth-type: ssh
+      virt-type: qemu
+      openstack-origin: cloud:xenial-newton
+    annotations:
+      "gui-x": "250"
+      "gui-y": "250"
+    to:
+      - "0"
+      - "5"
+      - "6"
+      - "7"
+  ceph-osd: 
+    charm: "cs:xenial/ceph-osd"
+    series: xenial
+    num_units: 3
+    options: 
+      osd-devices: "/dev/sdb"
+      osd-reformat: "yes"
+    annotations: 
+      "gui-x": "1000"
+      "gui-y": "500"
+    to: 
+      - "3"
+      - "4"
+      - "5"
+  neutron-gateway: 
+    charm: "cs:xenial/neutron-gateway"
+    series: xenial
+    num_units: 1
+    options: 
+      bridge-mappings: physnet1:br-ex
+      data-port: br-ex:eth1
+      openstack-origin: cloud:xenial-newton
+    annotations: 
+      "gui-x": "0"
+      "gui-y": "0"
+    to: 
+      - "3"
+  neutron-openvswitch: 
+    charm: "cs:xenial/neutron-openvswitch"
+    series: xenial
+    annotations: 
+      "gui-x": "250"
+      "gui-y": "500"
+  cinder:
+    annotations:
+      gui-x: '750'
+      gui-y: '0'
+    charm: cs:xenial/cinder
+    num_units: 1
+    options:
+      openstack-origin: cloud:xenial-newton
+      block-device: None
+      glance-api-version: 2
+    to:
+    - lxd:1
+  cinder-ceph:
+    annotations:
+      gui-x: '750'
+      gui-y: '250'
+    charm: cs:xenial/cinder-ceph
+    num_units: 0
+  openbaton:
+    charm: "./openbaton-charm"
+    series: trusty
+    num_units: 1
+    exposed: true
+    annotations:
+      "gui-x": "0"
+      "gui-y": "0"
+    to:
+      - lxd:3
+relations: 
+  - - "openstack-dashboard:identity-service"
+    - "keystone:identity-service"
+  - - "keystone:shared-db"
+    - "mysql:shared-db"
+  - - "ceph-osd:mon"
+    - "ceph-mon:osd"
+  - - "neutron-gateway:amqp"
+    - "rabbitmq-server:amqp"
+  - - "nova-cloud-controller:cloud-compute"
+    - "nova-compute-kvm:cloud-compute"
+  - - "neutron-openvswitch:neutron-plugin-api"
+    - "neutron-api:neutron-plugin-api"
+  - - "ceph-radosgw:identity-service"
+    - "keystone:identity-service"
+  - - "nova-compute-kvm:neutron-plugin"
+    - "neutron-openvswitch:neutron-plugin"
+  - - "neutron-api:amqp"
+    - "rabbitmq-server:amqp"
+  - - "nova-cloud-controller:amqp"
+    - "rabbitmq-server:amqp"
+  - - "nova-cloud-controller:shared-db"
+    - "mysql:shared-db"
+  - - "glance:shared-db"
+    - "mysql:shared-db"
+  - - "nova-cloud-controller:identity-service"
+    - "keystone:identity-service"
+  - - "glance:amqp"
+    - "rabbitmq-server:amqp"
+  - - "neutron-openvswitch:amqp"
+    - "rabbitmq-server:amqp"
+  - - "nova-cloud-controller:image-service"
+    - "glance:image-service"
+  - - "nova-compute-kvm:amqp"
+    - "rabbitmq-server:amqp"
+  - - "nova-cloud-controller:neutron-api"
+    - "neutron-api:neutron-api"
+  - - "ceph-mon:client"
+    - "glance:ceph"
+  - - "neutron-api:identity-service"
+    - "keystone:identity-service"
+  - - "ceph-radosgw:mon"
+    - "ceph-mon:radosgw"
+  - - "nova-compute-kvm:image-service"
+    - "glance:image-service"
+  - - "neutron-gateway:neutron-plugin-api"
+    - "neutron-api:neutron-plugin-api"
+  - - "ceph-mon:client"
+    - "nova-compute-kvm:ceph"
+  - - "nova-cloud-controller:quantum-network-service"
+    - "neutron-gateway:quantum-network-service"
+  - - "neutron-api:shared-db"
+    - "mysql:shared-db"
+  - - "glance:identity-service"
+    - "keystone:identity-service"
+  - - "cinder:image-service"
+    - "glance:image-service"
+  - - "cinder:amqp"
+    - "rabbitmq-server:amqp"
+  - - "cinder:identity-service"
+    - "keystone:identity-service"
+  - - "cinder:cinder-volume-service"
+    - "nova-cloud-controller:cinder-volume-service"
+  - - "cinder-ceph:storage-backend"
+    - "cinder:storage-backend"
+  - - "cinder:shared-db"
+    - "mysql:shared-db"
+  - - "ceph-mon:client"
+    - "cinder-ceph:ceph"
+  - - "openbaton:identity-credentials"
+    - "keystone:identity-credentials"
+machines: 
+  "0": 
+    series: xenial
+    constraints: "arch=amd64 cpu-cores=4 mem=16384"
+  "1": 
+    series: xenial
+    constraints: "arch=amd64 cpu-cores=4 mem=16384"
+  "2": 
+    series: xenial
+    constraints: "arch=amd64 cpu-cores=4 mem=16384"
+  "3": 
+    series: xenial
+    constraints: "arch=amd64 cpu-cores=4 mem=16384"
+  "4": 
+    series: xenial
+    constraints: "arch=amd64 cpu-cores=4 mem=16384"
+  "5":
+    series: xenial
+    constraints: "arch=amd64 cpu-cores=4 mem=16384"
+  "6":
+    series: xenial
+    constraints: "arch=amd64 cpu-cores=4 mem=16384"
+  "7":
+    series: xenial
+    constraints: "arch=amd64 cpu-cores=4 mem=16384"
