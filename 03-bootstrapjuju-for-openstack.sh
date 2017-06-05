@@ -41,14 +41,6 @@ EOF
 
 juju add-credential "${openstack_name}" --replace -f juju-openstack-cred.yaml
 
-#gss_status="$(juju status glance-simplestreams-sync)" 
-
-#echo "$gss_status" | grep -q ^glance-simplestreams-sync
-#[ $? -eq 0 ] || { echo "Charm glance-simplestreams-sync is not already installed. Existing"; exit 1; } 
-
-#echo "$gss_status" | grep -q "Sync completed at"
-#[ $? -eq 0 ] || { echo "Charm glance-simplestreams-sync has not synced the cloud images yet. Existing"; exit 1; } 
-
 readonly private_network_name="private"
 private_network_id="$(openstack network list | fgrep "$private_network_name" | awk '{print $2}')"
 
