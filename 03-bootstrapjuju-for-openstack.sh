@@ -1,8 +1,4 @@
 #!/usr/bin/env bash
-#
-# juju 2.1.2
-# maas 2.1.5
-# openstack ocata
 
 unalias -a
 obnum=`hostname | cut -c 10- -`
