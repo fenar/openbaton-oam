@@ -65,25 +65,25 @@ glance image-create --name=openims --visibility=public --container-format=ovf --
 for i in ` openstack hypervisor list -f value  -c "Hypervisor Hostname"` ; do echo -n $i, ; openstack hypervisor show $i -c hypervisor_type -f value ; done > hypervisor-hosts
 
 LXD_HOST=`grep lxd hypervisor-hosts  | cut -d "," -f 1 `
-KVM_HOST=`grep QEMU hypervisor-hosts  | cut -d "," -f 1 `
+#KVM_HOST=`grep QEMU hypervisor-hosts  | cut -d "," -f 1 `
 rm -rf hypervisor-hosts
 
-nova aggregate-create lxd-aggregate lxd-zone
-nova aggregate-set-metadata 1 lxd=true
-nova aggregate-create kvm-aggregate kvm-zone
+nova aggregate-create lxd-aggregate
+nova aggregate-set-metadata 1 exclusive=true
+nova aggregate-set-metadata 1 max_instances_per_host=1
+#nova aggregate-create kvm-aggregate
 
 for lxdnodes in ${LXD_HOST[@]}
 do
     nova aggregate-add-host lxd-aggregate ${lxdnodes:0:11}
 done
 
-for kvmnodes in ${KVM_HOST[@]}
-do
-    nova aggregate-add-host kvm-aggregate ${kvmnodes:0:11}
-done
+#for kvmnodes in ${KVM_HOST[@]}
+#do
+#    nova aggregate-add-host kvm-aggregate ${kvmnodes:0:11}
+#done
 
-nova flavor-create --is-public true m1.small 5367 4096 10 2
-nova flavor-create --is-public true m2.small 5369 4096 10 2
-nova flavor-key 5369 set aggregate_instance_extra_specs:lxd=true
-
+nova flavor-create --is-public true k.small 444 4096 10 2
+nova flavor-create --is-public true l.small 333 4096 10 2
+nova flavor-key 333 set aggregate_instance_extra_specs:exclusive=true
 exit
