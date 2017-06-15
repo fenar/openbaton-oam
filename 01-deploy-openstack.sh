@@ -7,11 +7,11 @@ model=`juju list-models |awk '{print $1}'|grep openstack`
 
 if [[ ${model:0:9} == "openstack" ]]; then
 	juju switch openstack
-     	juju deploy openstack-newton-openbaton-v5-kvmonly.yaml
+     	juju deploy openstack-newton-openbaton.yaml
 else
 	juju add-model openstack
 	juju switch openstack
-     	juju deploy openstack-newton-openbaton-v5-kvmonly.yaml
+     	juju deploy openstack-newton-openbaton.yaml
 fi
 
 echo "Login to the juju-gui to see status or use juju status"
