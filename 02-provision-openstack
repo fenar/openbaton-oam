@@ -30,6 +30,8 @@ export OS_REGION_NAME=RegionOne
 export OS_AUTH_URL=${OS_AUTH_PROTOCOL:-http}://`juju run --unit keystone/0 'unit-get private-address'`:5000/v2.0
 " > nova.rc
 
+sudo cp nova.rc /home/jenkins/joid_config/admin-openrc
+
 chmod +x neutron-ext-net
 chmod +x neutron-tenant-net
 
