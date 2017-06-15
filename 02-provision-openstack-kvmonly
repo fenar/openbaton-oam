@@ -62,5 +62,5 @@ neutron quota-update --security-group 100 --security-group-rule 500
 
 #Upload vnf images to glance
 glance image-create --name=openims --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/openims.img
-
+glance image-create --name=cicd --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/cicd-machine.qcow2
 exit
