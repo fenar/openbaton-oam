@@ -1,18 +1,37 @@
 series: xenial
-services: 
-  ceph-mon:
-    charm: "cs:xenial/ceph-mon"
+services:
+  neutron-gateway:
+    charm: "cs:~openstack-charmers-next/xenial/neutron-gateway"
     series: xenial
-    num_units: 3
+    num_units: 1
     options:
-      expected-osd-count: 3
+      bridge-mappings: physnet1:br-ex
+      data-port: br-ex:eth1
+      openstack-origin: cloud:xenial-newton
+    annotations:
+      "gui-x": "0"
+      "gui-y": "0"
+    to:
+      - "0"
+  ceph-mon:
+    charm: "cs:~openstack-charmers-next/xenial/ceph-mon"
+    series: xenial
+    num_units: 9
+    options:
+      expected-osd-count: 9
     annotations:
       "gui-x": "750"
       "gui-y": "500"
     to:
-      - lxd:0
       - lxd:1
       - lxd:2
+      - lxd:3
+      - lxd:4
+      - lxd:5
+      - lxd:6
+      - lxd:7
+      - lxd:8
+      - lxd:9
   nova-compute-kvm:
     charm: "cs:~openstack-charmers-next/xenial/nova-compute"
     series: xenial
@@ -28,19 +47,19 @@ services:
       "gui-x": "250"
       "gui-y": "250"
     to:
-      - "0"
       - "1"
       - "2"
-      - "7"
-      - "9"
+      - "3"
       - "4"
       - "5"
       - "6"
+      - "7"
       - "8"
+      - "9"
   ceph-osd:
-    charm: "cs:xenial/ceph-osd"
+    charm: "cs:~openstack-charmers-next/xenial/ceph-osd"
     series: xenial
-    num_units: 3
+    num_units: 9
     options:
       osd-devices: "/dev/sdb"
       osd-reformat: "yes"
@@ -48,124 +67,123 @@ services:
       "gui-x": "1000"
       "gui-y": "500"
     to:
-      - "0"
       - "1"
       - "2"
-  neutron-gateway:
-    charm: "cs:xenial/neutron-gateway"
+      - "3"
+      - "4"
+      - "5"
+      - "6"
+      - "7"
+      - "8"
+      - "9"
+  ntp:
+    annotations:
+      gui-x: '1000'
+      gui-y: '0'
+    charm: "cs:~openstack-charmers-next/xenial/ntp"
+    num_units: 0
+  rabbitmq-server:
+    charm: "cs:~openstack-charmers-next/xenial/rabbitmq-server"
+    series: xenial
+    num_units: 1
+    annotations:
+      gui-x: "500"
+      gui-y: "250"
+    to:
+      - lxd:0
+  mysql:
+    charm: "cs:~openstack-charmers-next/xenial/percona-cluster"
     series: xenial
     num_units: 1
     options:
-      bridge-mappings: physnet1:br-ex
-      data-port: br-ex:eth1
-      openstack-origin: cloud:xenial-newton
-    annotations:
-      "gui-x": "0"
-      "gui-y": "0"
-    to:
-      - "3"
-  rabbitmq-server: 
-    charm: "cs:~openstack-charmers/xenial/rabbitmq-server"
-    series: xenial
-    num_units: 1
-    annotations: 
-      gui-x: "500"
-      gui-y: "250"
-    to: 
-      - lxd:3
-  mysql: 
-    charm: "cs:xenial/percona-cluster"
-    series: xenial
-    num_units: 1
-    options: 
       max-connections: 1000
       innodb-buffer-pool-size: 512M
-    annotations: 
+    annotations:
       gui-x: "0"
       gui-y: "250"
-    to: 
-      - lxd:7
-  openstack-dashboard: 
-    charm: "cs:xenial/openstack-dashboard"
+    to:
+      - lxd:0
+  openstack-dashboard:
+    charm: "cs:~openstack-charmers-next/xenial/openstack-dashboard"
     series: xenial
     num_units: 1
-    annotations: 
+    annotations:
       gui-x: "500"
       gui-y: "-250"
     options:
       openstack-origin: cloud:xenial-newton
       webroot: "/"
       ubuntu-theme: "no"
-    to: 
-      - lxd:8
-  keystone: 
-    charm: "cs:xenial/keystone"
+    to:
+      - lxd:1
+  keystone:
+    charm: "cs:~openstack-charmers-next/xenial/keystone"
     series: xenial
     num_units: 1
-    options: 
+    options:
       admin-password: admin
       openstack-origin: cloud:xenial-newton
       worker-multiplier: 0.25
-    annotations: 
+    annotations:
       gui-x: "500"
       gui-y: "0"
-    to: 
-      - lxd:7
-  ceph-radosgw: 
-    charm: "cs:xenial/ceph-radosgw"
+    to:
+      - lxd:2
+  ceph-radosgw:
+    charm: "cs:~openstack-charmers-next/xenial/ceph-radosgw"
     series: xenial
     num_units: 1
-    annotations: 
+    annotations:
       gui-x: "1000"
       gui-y: "250"
-    to: 
-      - lxd:8
-  nova-cloud-controller: 
-    charm: "cs:xenial/nova-cloud-controller"
+    to:
+      - lxd:3
+  nova-cloud-controller:
+    charm: "cs:~openstack-charmers-next/xenial/nova-cloud-controller"
     series: xenial
     num_units: 1
-    options: 
+    options:
       network-manager: Neutron
       console-access-protocol: novnc
       openstack-origin: cloud:xenial-newton
       worker-multiplier: 0.25
       scheduler-default-filters: "AggregateInstanceExtraSpecsFilter,NumInstancesFilter,AggregateNumInstancesFilter,RetryFilter,AvailabilityZoneFilter,CoreFilter,RamFilter,ComputeFilter,ComputeCapabilitiesFilter,ImagePropertiesFilter,ServerGroupAntiAffinityFilter,ServerGroupAffinityFilter,PciPassthroughFilter"
-    annotations: 
+    annotations:
       gui-x: "0"
       gui-y: "500"
-    to: 
+    to:
       - lxd:4
-  neutron-api: 
-    charm: "cs:xenial/neutron-api"
+  neutron-api:
+    charm: "cs:~openstack-charmers-next/xenial/neutron-api"
     series: xenial
     num_units: 1
-    options: 
+    options:
       neutron-security-groups: true
       flat-network-providers: physnet1
       openstack-origin: cloud:xenial-newton
       worker-multiplier: 0.25
-    annotations: 
+    annotations:
       gui-x: "500"
       gui-y: "500"
-    to: 
+    to:
       - lxd:5
-  glance: 
-    charm: "cs:xenial/glance"
+  glance:
+    charm: "cs:~openstack-charmers-next/xenial/glance"
     series: xenial
     num_units: 1
-    annotations: 
+    annotations:
       "gui-x": "250"
       "gui-y": "0"
     options:
       openstack-origin: cloud:xenial-newton
       worker-multiplier: 0.25
-    to: 
+    to:
       - lxd:6
   glance-simplestreams-sync:
     annotations:
       gui-x: '250'
       gui-y: '0'
-    charm: cs:glance-simplestreams-sync
+    charm: "cs:glance-simplestreams-sync"
     options:
       mirror_list: |
         [
@@ -173,23 +191,23 @@ services:
             url: 'http://cloud-images.ubuntu.com/releases/',
             name_prefix: 'ubuntu:released',
             path: 'streams/v1/index.sjson', max: 1,
-            item_filters: ['release~(xenial)', 'arch~(x86_64|amd64)', 'ftype~(disk1.img|disk.img|root.tar.xz)'],
+            item_filters: ['release~(xenial)', 'arch~(x86_64|amd64)', 'ftype~(disk1.img|disk.img)'],
           },
         ]
     num_units: 1
     to:
-    - lxd:4
-  neutron-openvswitch: 
-    charm: "cs:xenial/neutron-openvswitch"
+      - lxd:7
+  neutron-openvswitch:
+    charm: "cs:~openstack-charmers-next/xenial/neutron-openvswitch"
     series: xenial
-    annotations: 
+    annotations:
       "gui-x": "250"
       "gui-y": "500"
   cinder:
     annotations:
       gui-x: '750'
       gui-y: '0'
-    charm: cs:xenial/cinder
+    charm: "cs:~openstack-charmers-next/xenial/cinder"
     num_units: 1
     options:
       openstack-origin: cloud:xenial-newton
@@ -197,21 +215,21 @@ services:
       glance-api-version: 2
       worker-multiplier: 0.25
     to:
-    - lxd:5
+      - lxd:8
   cinder-ceph:
     annotations:
       gui-x: '750'
       gui-y: '250'
-    charm: cs:xenial/cinder-ceph
+    charm: "cs:~openstack-charmers-next/xenial/cinder-ceph"
     num_units: 0
   heat:
-    charm: cs:xenial/heat
+    charm: "cs:~openstack-charmers-next/xenial/heat"
     num_units: 1
     options:
       openstack-origin: cloud:xenial-newton
       worker-multiplier: 0.25
     to:
-    - lxd:9
+      - lxd:9
   openbaton:
     charm: "./openbaton-charm"
     series: trusty
@@ -221,100 +239,104 @@ services:
       "gui-x": "0"
       "gui-y": "0"
     to:
-    - lxd:10
-relations: 
-  - - "openstack-dashboard:identity-service"
-    - "keystone:identity-service"
-  - - "keystone:shared-db"
-    - "mysql:shared-db"
-  - - "ceph-osd:mon"
-    - "ceph-mon:osd"
-  - - "neutron-gateway:amqp"
-    - "rabbitmq-server:amqp"
-  - - "nova-cloud-controller:cloud-compute"
-    - "nova-compute-kvm:cloud-compute"
-  - - "neutron-openvswitch:neutron-plugin-api"
-    - "neutron-api:neutron-plugin-api"
-  - - "ceph-radosgw:identity-service"
-    - "keystone:identity-service"
-  - - "nova-compute-kvm:neutron-plugin"
-    - "neutron-openvswitch:neutron-plugin"
-  - - "neutron-api:amqp"
-    - "rabbitmq-server:amqp"
-  - - "nova-cloud-controller:amqp"
-    - "rabbitmq-server:amqp"
-  - - "nova-cloud-controller:shared-db"
-    - "mysql:shared-db"
-  - - "glance:shared-db"
-    - "mysql:shared-db"
-  - - "nova-cloud-controller:identity-service"
-    - "keystone:identity-service"
-  - - "glance:amqp"
-    - "rabbitmq-server:amqp"
-  - - "neutron-openvswitch:amqp"
-    - "rabbitmq-server:amqp"
-  - - "nova-cloud-controller:image-service"
-    - "glance:image-service"
-  - - "nova-compute-kvm:amqp"
-    - "rabbitmq-server:amqp"
-  - - "nova-cloud-controller:neutron-api"
-    - "neutron-api:neutron-api"
-  - - "ceph-mon:client"
-    - "glance:ceph"
-  - - "neutron-api:identity-service"
-    - "keystone:identity-service"
-  - - "ceph-radosgw:mon"
-    - "ceph-mon:radosgw"
-  - - "nova-compute-kvm:image-service"
-    - "glance:image-service"
-  - - "neutron-gateway:neutron-plugin-api"
-    - "neutron-api:neutron-plugin-api"
-  - - "ceph-mon:client"
-    - "nova-compute-kvm:ceph"
-  - - "nova-cloud-controller:quantum-network-service"
-    - "neutron-gateway:quantum-network-service"
-  - - "neutron-api:shared-db"
-    - "mysql:shared-db"
-  - - "glance:identity-service"
-    - "keystone:identity-service"
-  - - "cinder:image-service"
-    - "glance:image-service"
-  - - "cinder:amqp"
-    - "rabbitmq-server:amqp"
-  - - "cinder:identity-service"
-    - "keystone:identity-service"
-  - - "cinder:cinder-volume-service"
-    - "nova-cloud-controller:cinder-volume-service"
-  - - "cinder-ceph:storage-backend"
-    - "cinder:storage-backend"
-  - - "cinder:shared-db"
-    - "mysql:shared-db"
-  - - "ceph-mon:client"
-    - "cinder-ceph:ceph"
-  - - "openbaton:identity-credentials"
-    - "keystone:identity-credentials"
-  - - "glance-simplestreams-sync:identity-service"
-    - "keystone:identity-service"
-  - - "heat:identity-service"
-    - "keystone:identity-service"
-  - - "heat:amqp"
-    - "rabbitmq-server:amqp"
-  - - "heat:shared-db"
-    - "mysql:shared-db"
-machines: 
-  "0": 
+      - lxd:0
+relations:
+- - nova-compute-kvm:amqp
+  - rabbitmq-server:amqp
+- - neutron-gateway:amqp
+  - rabbitmq-server:amqp
+- - keystone:shared-db
+  - mysql:shared-db
+- - nova-cloud-controller:identity-service
+  - keystone:identity-service
+- - glance:identity-service
+  - keystone:identity-service
+- - neutron-api:identity-service
+  - keystone:identity-service
+- - neutron-openvswitch:neutron-plugin-api
+  - neutron-api:neutron-plugin-api
+- - neutron-api:shared-db
+  - mysql:shared-db
+- - neutron-api:amqp
+  - rabbitmq-server:amqp
+- - neutron-gateway:neutron-plugin-api
+  - neutron-api:neutron-plugin-api
+- - glance:shared-db
+  - mysql:shared-db
+- - glance:amqp
+  - rabbitmq-server:amqp
+- - nova-cloud-controller:image-service
+  - glance:image-service
+- - nova-compute-kvm:image-service
+  - glance:image-service
+- - nova-cloud-controller:cloud-compute
+  - nova-compute-kvm:cloud-compute
+- - nova-cloud-controller:amqp
+  - rabbitmq-server:amqp
+- - nova-cloud-controller:quantum-network-service
+  - neutron-gateway:quantum-network-service
+- - nova-compute-kvm:neutron-plugin
+  - neutron-openvswitch:neutron-plugin
+- - neutron-openvswitch:amqp
+  - rabbitmq-server:amqp
+- - openstack-dashboard:identity-service
+  - keystone:identity-service
+- - nova-cloud-controller:shared-db
+  - mysql:shared-db
+- - nova-cloud-controller:neutron-api
+  - neutron-api:neutron-api
+- - cinder:image-service
+  - glance:image-service
+- - cinder:amqp
+  - rabbitmq-server:amqp
+- - cinder:identity-service
+  - keystone:identity-service
+- - cinder:cinder-volume-service
+  - nova-cloud-controller:cinder-volume-service
+- - cinder-ceph:storage-backend
+  - cinder:storage-backend
+- - ceph-mon:client
+  - nova-compute-kvm:ceph
+- - cinder:shared-db
+  - mysql:shared-db
+- - ceph-mon:client
+  - cinder-ceph:ceph
+- - ceph-mon:client
+  - glance:ceph
+- - ceph-osd:mon
+  - ceph-mon:osd
+- - ntp:juju-info
+  - nova-compute-kvm:juju-info
+- - ntp:juju-info
+  - neutron-gateway:juju-info
+- - ceph-radosgw:mon
+  - ceph-mon:radosgw
+- - ceph-radosgw:identity-service
+  - keystone:identity-service
+- - glance-simplestreams-sync:identity-service
+  - keystone:identity-service
+- - openbaton:identity-credentials
+  - keystone:identity-credentials
+- - heat:identity-service
+  - keystone:identity-service
+- - heat:amqp
+  - rabbitmq-server:amqp
+- - heat:shared-db
+  - mysql:shared-db
+machines:
+  "0":
     series: xenial
-    constraints: "arch=amd64 tags=2disk"
-  "1": 
+    constraints: "arch=amd64 tags=physical"
+  "1":
     series: xenial
-    constraints: "arch=amd64 tags=2disk"
-  "2": 
+    constraints: "arch=amd64 tags=physical"
+  "2":
     series: xenial
-    constraints: "arch=amd64 tags=2disk"
-  "3": 
+    constraints: "arch=amd64 tags=physical"
+  "3":
     series: xenial
-    constraints: "arch=amd64 tags=virtual"
-  "4": 
+    constraints: "arch=amd64 tags=physical"
+  "4":
     series: xenial
     constraints: "arch=amd64 tags=physical"
   "5":
@@ -330,8 +352,5 @@ machines:
     series: xenial
     constraints: "arch=amd64 tags=physical"
   "9":
-    series: xenial
-    constraints: "arch=amd64 tags=physical"
-  "10":
     series: xenial
     constraints: "arch=amd64 tags=physical"
