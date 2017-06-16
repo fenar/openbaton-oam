@@ -5,6 +5,18 @@
 #
 model=`juju list-models |awk '{print $1}'|grep openstack`
 
+if [ ! -d openbaton-charm ]; then
+  echo "creating openbaton-charm"
+  git clone https://github.com/openbaton/juju-charm openbaton-charm
+  sleep 10s
+else
+  cd /openbaton-charm
+  git pull
+  echo "pulling latest openbaton charm"
+  sleep 10s
+  cd ..
+fi
+
 if [[ ${model:0:9} == "openstack" ]]; then
 	juju switch openstack
      	juju deploy openstack-newton-openbaton.yaml
