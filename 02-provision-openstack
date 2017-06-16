@@ -36,7 +36,7 @@ chmod +x neutron-tenant-net
 source nova.rc
 
 #EXT NET 
-./neutron-ext-net -g $NEUTRON_EXT_NET_GW -c $NEUTRON_EXT_NET_CIDR  -f $NEUTRON_EXT_NET_FLOAT_RANGE_START:$NEUTRON_EXT_NET_FLOAT_RANGE_END ext_net
+./neutron-ext-net -g $NEUTRON_EXT_NET_GW -c $NEUTRON_EXT_NET_CIDR  -f $NEUTRON_EXT_NET_FLOAT_RANGE_START:$NEUTRON_EXT_NET_FLOAT_RANGE_END $NEUTRON_EXT_NET_NAME
 
 #PRIVATE NET
 ./neutron-tenant-net -t admin -r provider-router -N $NEUTRON_DNS private $NEUTRON_FIXED_NET_CIDR
