@@ -62,6 +62,7 @@ neutron quota-update --security-group 100 --security-group-rule 500
 
 #Upload vnf images to glance
 #glance image-create --name=openims --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/openims.img
-#glance image-create --name=cicd --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/cicd-machine.qcow2
+glance image-create --name=Ubuntu-16.04 --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/xenial-server-cloudimg-amd64-disk1.img
+glance image-create --name=cirros-0.3.5 --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/cirros-0.3.5-x86_64-disk.img
 sudo cp nova.rc /home/jenkins/joid_config/admin-openrc
 exit
