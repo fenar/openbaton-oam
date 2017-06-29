@@ -112,7 +112,7 @@ services:
       admin-password: admin
       openstack-origin: cloud:xenial-newton
       worker-multiplier: 0.25
-      preferred-api-version: 3
+      preferred-api-version: 2
     annotations:
       gui-x: "500"
       gui-y: "0"
