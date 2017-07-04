@@ -22,8 +22,8 @@ cat << EOF| python -
 import json, subprocess, re
 from subprocess import check_output
 
-cmd = ["juju", "ssh", "$1", "sudo reboot now"]
-out = check_output(cmd, shell=True, stderr=subprocess.STDOUT)
+cmd = ["juju", "ssh", "$1", "\"sudo reboot now\""]
+out = check_output(cmd, shell=True)
 EOF
 }
 
