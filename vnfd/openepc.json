@@ -2,7 +2,7 @@
     "name":"OpenEPC",
     "vendor":"CND",
     "version":"Release7",
-    "vnfd":[{"id":"0130bf7f-93b5-457b-a64a-557289ea7791"},{"id":"08bbb43d-2283-437e-8523-a3599dd1d0da"},{"id":"46b437b4-dde7-4c1d-8bff-1e1293e80e94"},{"id":"b5ae9648-5a01-4de1-bdbd-21a1fea69e21"},{"id":"e1975bc6-2446-4664-a27e-9a0eed547f3f"}],
+    "vnfd":[{"id":"3191f57a-c1a4-46a9-a45a-6d48e5cefcc0"},{"id":"4a0cc494-0a32-4114-a584-3d085467943f"},{"id":"d66827df-a684-4448-b857-d439b7c6f1a5"},{"id":"df440a1d-9d72-489a-8f52-02c1357594bb"},{"id":"516228c4-0f7f-4ebf-8ac2-6d2f7bc3d3be"}],
     "vld":[  
         {  
             "name":"mgmt"
@@ -19,4 +19,3 @@
     ],
     "vnf_dependency":[]
 }
-
