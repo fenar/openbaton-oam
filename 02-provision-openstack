@@ -45,8 +45,14 @@ source nova.rc
 openstack security group rule create --proto icmp default
 openstack security group rule create --proto tcp --dst-port 22 default
 openstack security group rule create --proto tcp --dst-port 80 default
+openstack security group rule create --proto tcp --dst-port 8080 default
 openstack security group rule create --proto tcp --dst-port 443 default
 openstack security group rule create --proto tcp --dst-port 3389 default
+#Port openning for IMS/SiP Traffic
+openstack security group rule create --proto tcp --dst-port 5060 default
+openstack security group rule create --proto tcp --dst-port 4060 default
+openstack security group rule create --proto udp --dst-port 5060 default
+openstack security group rule create --proto udp --dst-port 4060 default
 
 #Upload a default SSH key
 openstack keypair create  --public-key ~/.ssh/id_rsa.pub default
