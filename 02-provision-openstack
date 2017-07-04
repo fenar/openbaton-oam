@@ -11,14 +11,14 @@ dpkg -l $PKGS > /dev/null || sudo apt-get install -y $PKGS
 
 NEUTRON_DNS="172.27.$((obnum+3)).254"
 
-NEUTRON_EXT_NET_NAME="ext-net"
+NEUTRON_EXT_NET_NAME="extnet"
 NEUTRON_EXT_NET_GW="172.27.$((obnum+3)).254"
 NEUTRON_EXT_NET_CIDR="172.27.$((obnum+2)).0/23"
 NEUTRON_EXT_NET_FLOAT_RANGE_START="172.27.$((obnum+3)).150"
 NEUTRON_EXT_NET_FLOAT_RANGE_END="172.27.$((obnum+3)).200"
 
 NEUTRON_FIXED_NET_CIDR="192.168.$((obnum)).0/24"
-NEUTRON_FIXED_NET_NAME="admin-net"
+NEUTRON_FIXED_NET_NAME="tenant"
 
 keystone=$(juju status keystone | grep keystone/0 | awk '{print $5}' )
 
@@ -66,6 +66,6 @@ glance image-create --name=openims --visibility=public --container-format=ovf --
 glance image-create --name=ubuntu_16.04 --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/xenial-server-cloudimg-amd64-disk1.img
 glance image-create --name=ubuntu_14.04 --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/trusty-server-cloudimg-amd64-disk1.img
 glance image-create --name=cirros_0.3.5 --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/cirros-0.3.5-x86_64-disk.img
-glance image-create --name=centos_7 --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/CentOS-7-x86_64-GenericCloud.qcow2
-#sudo cp nova.rc /home/jenkins/joid_config/admin-openrc
+#glance image-create --name=centos_7 --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/CentOS-7-x86_64-GenericCloud.qcow2
+sudo cp nova.rc /home/jenkins/joid_config/admin-openrc
 exit
