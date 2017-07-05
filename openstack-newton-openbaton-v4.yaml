@@ -13,25 +13,41 @@ services:
       "gui-y": "0"
     to:
       - "0"
+  nova-cloud-controller:
+    charm: "cs:nova-cloud-controller"
+    series: xenial
+    num_units: 1
+    options:
+      network-manager: Neutron
+      console-access-protocol: novnc
+      openstack-origin: cloud:xenial-newton
+      #worker-multiplier: 0.25
+      #scheduler-default-filters: "AggregateInstanceExtraSpecsFilter,NumInstancesFilter,AggregateNumInstancesFilter,RetryFilter,AvailabilityZoneFilter,CoreFilter,RamFilter,ComputeFilter,ComputeCapabilitiesFilter,ImagePropertiesFilter,ServerGroupAntiAffinityFilter,ServerGroupAffinityFilter,PciPassthroughFilter"
+    annotations:
+      gui-x: "0"
+      gui-y: "500"
+    to:
+      - "1"
   ceph-mon:
     charm: "cs:ceph-mon"
     series: xenial
-    num_units: 5
+    num_units: 6
     options:
-      expected-osd-count: 5
+      expected-osd-count: 6
     annotations:
       "gui-x": "750"
       "gui-y": "500"
     to:
-      - lxd:1
       - lxd:2
       - lxd:3
       - lxd:4
       - lxd:5
+      - lxd:6
+      - lxd:7
   nova-compute-kvm:
     charm: "cs:nova-compute"
     series: xenial
-    num_units: 5
+    num_units: 6
     options:
       enable-live-migration: true
       enable-resize: true
@@ -43,15 +59,16 @@ services:
       "gui-x": "250"
       "gui-y": "250"
     to:
-      - "1"
       - "2"
       - "3"
       - "4"
       - "5"
+      - "7"
+      - "7"
   ceph-osd:
     charm: "cs:ceph-osd"
     series: xenial
-    num_units: 5
+    num_units: 6
     options:
       osd-devices: "/dev/sdb"
       osd-reformat: "yes"
@@ -59,11 +76,12 @@ services:
       "gui-x": "1000"
       "gui-y": "500"
     to:
-      - "1"
       - "2"
       - "3"
       - "4"
       - "5"
+      - "6"
+      - "7"
   ntp:
     annotations:
       gui-x: '1000'
@@ -117,7 +135,7 @@ services:
       gui-x: "500"
       gui-y: "0"
     to:
-      - lxd:2
+      - lxd:1
   ceph-radosgw:
     charm: "cs:ceph-radosgw"
     series: xenial
@@ -126,22 +144,7 @@ services:
       gui-x: "1000"
       gui-y: "250"
     to:
-      - lxd:3
-  nova-cloud-controller:
-    charm: "cs:nova-cloud-controller"
-    series: xenial
-    num_units: 1
-    options:
-      network-manager: Neutron
-      console-access-protocol: novnc
-      openstack-origin: cloud:xenial-newton
-      #worker-multiplier: 0.25
-      #scheduler-default-filters: "AggregateInstanceExtraSpecsFilter,NumInstancesFilter,AggregateNumInstancesFilter,RetryFilter,AvailabilityZoneFilter,CoreFilter,RamFilter,ComputeFilter,ComputeCapabilitiesFilter,ImagePropertiesFilter,ServerGroupAntiAffinityFilter,ServerGroupAffinityFilter,PciPassthroughFilter"
-    annotations:
-      gui-x: "0"
-      gui-y: "500"
-    to:
-      - "6"
+      - lxd:2
   neutron-api:
     charm: "cs:neutron-api"
     series: xenial
@@ -155,7 +158,7 @@ services:
       gui-x: "500"
       gui-y: "500"
     to:
-      - lxd:4
+      - lxd:3
   glance:
     charm: "cs:glance"
     series: xenial
@@ -167,7 +170,7 @@ services:
       openstack-origin: cloud:xenial-newton
       worker-multiplier: 0.25
     to:
-      - lxd:6
+      - lxd:4
   neutron-openvswitch:
     charm: "cs:neutron-openvswitch"
     series: xenial
@@ -210,7 +213,7 @@ services:
       "gui-x": "0"
       "gui-y": "0"
     to:
-      - lxd:0
+      - lxd:7
 relations:
 - - nova-compute-kvm:amqp
   - rabbitmq-server:amqp
@@ -312,5 +315,8 @@ machines:
     series: xenial
     constraints: "arch=amd64 tags=physical"
   "6":
+    series: xenial
+    constraints: "arch=amd64 tags=physical"
+  "7":
     series: xenial
     constraints: "arch=amd64 tags=physical"
