@@ -7,7 +7,7 @@ model=`juju list-models |awk '{print $1}'|grep openstack`
 
 if [ ! -d openbaton-charm ]; then
   echo "creating openbaton-charm"
-  git clone https://github.com/openbaton/juju-charm openbaton-charm
+  git clone https://github.com/fenar/juju-charm.git openbaton-charm
   sleep 10s
 fi
 
