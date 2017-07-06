@@ -214,7 +214,7 @@ services:
       "gui-x": "0"
       "gui-y": "0"
     to:
-      - lxd:7
+      - "9"
 relations:
 - - nova-compute-kvm:amqp
   - rabbitmq-server:amqp
@@ -324,3 +324,6 @@ machines:
   "8":
     series: xenial
     constraints: "arch=amd64 tags=physical"
+  "9":
+    series: xenial
+    constraints: "arch=amd64 tags=virtual"
