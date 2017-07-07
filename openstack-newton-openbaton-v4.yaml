@@ -325,5 +325,5 @@ machines:
     series: xenial
     constraints: "arch=amd64 tags=physical"
   "9":
-    series: xenial
+    series: trusty
     constraints: "arch=amd64 tags=virtual"
