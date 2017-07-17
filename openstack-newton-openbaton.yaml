@@ -1,7 +1,7 @@
 series: xenial
 services:
   neutron-gateway:
-    charm: "cs:~openstack-charmers-next/xenial/neutron-gateway"
+    charm: "cs:neutron-gateway"
     series: xenial
     num_units: 1
     options:
@@ -13,17 +13,29 @@ services:
       "gui-y": "0"
     to:
       - "0"
-  ceph-mon:
-    charm: "cs:~openstack-charmers-next/xenial/ceph-mon"
+  nova-cloud-controller:
+    charm: "cs:nova-cloud-controller"
     series: xenial
-    num_units: 9
+    num_units: 1
     options:
-      expected-osd-count: 9
+      network-manager: Neutron
+      console-access-protocol: novnc
+      openstack-origin: cloud:xenial-newton
+    annotations:
+      gui-x: "0"
+      gui-y: "500"
+    to:
+      - "1"
+  ceph-mon:
+    charm: "cs:ceph-mon"
+    series: xenial
+    num_units: 7
+    options:
+      expected-osd-count: 7
     annotations:
       "gui-x": "750"
       "gui-y": "500"
     to:
-      - lxd:1
       - lxd:2
       - lxd:3
       - lxd:4
@@ -31,11 +43,10 @@ services:
       - lxd:6
       - lxd:7
       - lxd:8
-      - lxd:9
   nova-compute-kvm:
-    charm: "cs:~openstack-charmers-next/xenial/nova-compute"
+    charm: "cs:nova-compute"
     series: xenial
-    num_units: 9
+    num_units: 7
     options:
       enable-live-migration: true
       enable-resize: true
@@ -47,7 +58,6 @@ services:
       "gui-x": "250"
       "gui-y": "250"
     to:
-      - "1"
       - "2"
       - "3"
       - "4"
@@ -55,11 +65,10 @@ services:
       - "6"
       - "7"
       - "8"
-      - "9"
   ceph-osd:
-    charm: "cs:~openstack-charmers-next/xenial/ceph-osd"
+    charm: "cs:ceph-osd"
     series: xenial
-    num_units: 9
+    num_units: 7
     options:
       osd-devices: "/dev/sdb"
       osd-reformat: "yes"
@@ -67,7 +76,6 @@ services:
       "gui-x": "1000"
       "gui-y": "500"
     to:
-      - "1"
       - "2"
       - "3"
       - "4"
@@ -75,12 +83,11 @@ services:
       - "6"
       - "7"
       - "8"
-      - "9"
   ntp:
     annotations:
       gui-x: '1000'
       gui-y: '0'
-    charm: "cs:~openstack-charmers-next/xenial/ntp"
+    charm: "cs:ntp"
     num_units: 0
   rabbitmq-server:
     charm: "cs:~openstack-charmers-next/xenial/rabbitmq-server"
@@ -92,7 +99,7 @@ services:
     to:
       - lxd:0
   mysql:
-    charm: "cs:~openstack-charmers-next/xenial/percona-cluster"
+    charm: "cs:percona-cluster"
     series: xenial
     num_units: 1
     options:
@@ -102,9 +109,9 @@ services:
       gui-x: "0"
       gui-y: "250"
     to:
-      - lxd:0
+      - lxd:1
   openstack-dashboard:
-    charm: "cs:~openstack-charmers-next/xenial/openstack-dashboard"
+    charm: "cs:openstack-dashboard"
     series: xenial
     num_units: 1
     annotations:
@@ -115,46 +122,32 @@ services:
       webroot: "/"
       ubuntu-theme: "no"
     to:
-      - lxd:1
+      - lxd:0
   keystone:
-    charm: "cs:~openstack-charmers-next/xenial/keystone"
+    charm: "cs:keystone"
     series: xenial
     num_units: 1
     options:
       admin-password: admin
       openstack-origin: cloud:xenial-newton
       worker-multiplier: 0.25
+      preferred-api-version: 2
     annotations:
       gui-x: "500"
       gui-y: "0"
     to:
-      - lxd:2
+      - lxd:1
   ceph-radosgw:
-    charm: "cs:~openstack-charmers-next/xenial/ceph-radosgw"
+    charm: "cs:ceph-radosgw"
     series: xenial
     num_units: 1
     annotations:
       gui-x: "1000"
       gui-y: "250"
     to:
-      - lxd:3
-  nova-cloud-controller:
-    charm: "cs:~openstack-charmers-next/xenial/nova-cloud-controller"
-    series: xenial
-    num_units: 1
-    options:
-      network-manager: Neutron
-      console-access-protocol: novnc
-      openstack-origin: cloud:xenial-newton
-      worker-multiplier: 0.25
-      scheduler-default-filters: "AggregateInstanceExtraSpecsFilter,NumInstancesFilter,AggregateNumInstancesFilter,RetryFilter,AvailabilityZoneFilter,CoreFilter,RamFilter,ComputeFilter,ComputeCapabilitiesFilter,ImagePropertiesFilter,ServerGroupAntiAffinityFilter,ServerGroupAffinityFilter,PciPassthroughFilter"
-    annotations:
-      gui-x: "0"
-      gui-y: "500"
-    to:
-      - lxd:4
+      - lxd:2
   neutron-api:
-    charm: "cs:~openstack-charmers-next/xenial/neutron-api"
+    charm: "cs:neutron-api"
     series: xenial
     num_units: 1
     options:
@@ -166,9 +159,9 @@ services:
       gui-x: "500"
       gui-y: "500"
     to:
-      - lxd:5
+      - lxd:3
   glance:
-    charm: "cs:~openstack-charmers-next/xenial/glance"
+    charm: "cs:glance"
     series: xenial
     num_units: 1
     annotations:
@@ -178,9 +171,9 @@ services:
       openstack-origin: cloud:xenial-newton
       worker-multiplier: 0.25
     to:
-      - lxd:6
+      - lxd:4
   neutron-openvswitch:
-    charm: "cs:~openstack-charmers-next/xenial/neutron-openvswitch"
+    charm: "cs:neutron-openvswitch"
     series: xenial
     annotations:
       "gui-x": "250"
@@ -189,7 +182,7 @@ services:
     annotations:
       gui-x: '750'
       gui-y: '0'
-    charm: "cs:~openstack-charmers-next/xenial/cinder"
+    charm: "cs:cinder"
     num_units: 1
     options:
       openstack-origin: cloud:xenial-newton
@@ -197,21 +190,21 @@ services:
       glance-api-version: 2
       worker-multiplier: 0.25
     to:
-      - lxd:7
+      - lxd:5
   cinder-ceph:
     annotations:
       gui-x: '750'
       gui-y: '250'
-    charm: "cs:~openstack-charmers-next/xenial/cinder-ceph"
+    charm: "cs:cinder-ceph"
     num_units: 0
   heat:
-    charm: "cs:~openstack-charmers-next/xenial/heat"
+    charm: "cs:heat"
     num_units: 1
     options:
       openstack-origin: cloud:xenial-newton
       worker-multiplier: 0.25
     to:
-      - lxd:8
+      - lxd:6
   openbaton:
     charm: "./openbaton-charm"
     series: trusty
@@ -221,7 +214,7 @@ services:
       "gui-x": "0"
       "gui-y": "0"
     to:
-      - lxd:9
+      - "9"
 relations:
 - - nova-compute-kvm:amqp
   - rabbitmq-server:amqp
@@ -332,5 +325,5 @@ machines:
     series: xenial
     constraints: "arch=amd64 tags=physical"
   "9":
-    series: xenial
-    constraints: "arch=amd64 tags=physical"
+    series: trusty
+    constraints: "arch=amd64 tags=virtual"
