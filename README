@@ -59,3 +59,7 @@ Order of Execution:
                
 		Test User: alice@open-ims
 		Secret: alice
+# NOTES:
+(1) In order to pass sctp traffic following kernel modules needs to be loaded:
+sudo modprobe nf_conntrack_proto_sctp
+sudo modprobe nf_nat_proto_sctp 
