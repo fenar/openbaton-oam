@@ -45,6 +45,7 @@ source nova.rc
 #openstack security group rule create --proto icmp default
 #openstack security group rule create --proto tcp --dst-port 1:65535 default
 #openstack security group rule create --proto udp --dst-port 1:65535 default
+#openstack security group rule create --proto "132" --dst-port 1:65535 default
 
 #Upload a default SSH key
 openstack keypair create  --public-key ~/.ssh/id_rsa.pub default
@@ -67,6 +68,8 @@ glance image-create --name=cirros_0.3.5 --visibility=public --container-format=o
 #glance image-create --name=centos_7 --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/CentOS-7-x86_64-GenericCloud.qcow2
 glance image-create --name=OpenEPC_powerdns_ub_xenial --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/OpenEPC_powerdns_ub_xenial.qcow2
 glance image-create --name=OpenEPC_ub_xenial --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/OpenEPC_ub_xenial.qcow2
+
+## OPNFV CI/CD Setup Add-on Part:
 #sudo cp nova.rc /home/jenkins/joid_config/admin-openrc
-#openstack security group rule create --proto "132" --dst-port 1:65535 default
+
 exit
