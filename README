@@ -65,6 +65,8 @@ sudo modprobe nf_conntrack_proto_sctp
 sudo modprobe nf_nat_proto_sctp 
 
 (2) Create User with All Access in mme & hss mysql db:
-CREATE USER 'newuser'@'localhost' IDENTIFIED BY 'password';<br>
-GRANT ALL PRIVILEGES ON * . * TO 'newuser'@'localhost'; <br>
-FLUSH PRIVILEGES;<br>
+CREATE USER 'newuser'@'localhost' IDENTIFIED BY 'password';
+GRANT ALL PRIVILEGES ON * . * TO 'newuser'@'localhost'; 
+FLUSH PRIVILEGES;
+sudo service mysql restart
+Testing: mysql -h 192.168.214.9 -u admin -p mme_db
