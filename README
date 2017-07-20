@@ -63,3 +63,8 @@ Order of Execution:
 (1) In order to pass sctp traffic following kernel modules needs to be loaded:
 sudo modprobe nf_conntrack_proto_sctp
 sudo modprobe nf_nat_proto_sctp 
+
+(2) Create User with All Access in mme & hss mysql db:
+CREATE USER 'newuser'@'localhost' IDENTIFIED BY 'password';<br>
+GRANT ALL PRIVILEGES ON * . * TO 'newuser'@'localhost'; <br>
+FLUSH PRIVILEGES;<br>
