@@ -70,3 +70,8 @@ GRANT ALL PRIVILEGES ON * . * TO 'admin'@'localhost';
 FLUSH PRIVILEGES;
 sudo service mysql restart
 Testing: mysql -h 192.168.214.9 -u admin -p mme_db
+
+(2) SPGW IPTABLES
+List POSTPROCESSING Rules: iptables -t nat -v -L -n --line-number 
+Delete POSTPROCESSING Rules: iptables -t nat -D POSTROUTING {number-here}
+
