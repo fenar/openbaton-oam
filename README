@@ -74,4 +74,7 @@ Testing: mysql -h 192.168.214.9 -u admin -p mme_db
 (2) SPGW IPTABLES
 List POSTPROCESSING Rules: iptables -t nat -v -L -n --line-number 
 Delete POSTPROCESSING Rules: iptables -t nat -D POSTROUTING {number-here}
-
+ADD POSTPROCESING RULE with SNAT: iptables -t nat -A POSTROUTING -o net_d -j SNAT --to 192.168.137.6
+sudo sysctl -w net.ipv4.ip_forward=1
+sudo iptables -A FORWARD -i net_d -j ACCEPT
+sudo iptables -t nat -A POSTROUTING -o net_d -j MASQUERADE
