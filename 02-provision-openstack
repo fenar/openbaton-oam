@@ -39,13 +39,13 @@ source nova.rc
 ./neutron-ext-net -g $NEUTRON_EXT_NET_GW -c $NEUTRON_EXT_NET_CIDR  -f $NEUTRON_EXT_NET_FLOAT_RANGE_START:$NEUTRON_EXT_NET_FLOAT_RANGE_END $NEUTRON_EXT_NET_NAME
 
 #PRIVATE NET
-#./neutron-tenant-net -t admin -r provider-router -N $NEUTRON_DNS private $NEUTRON_FIXED_NET_CIDR
+./neutron-tenant-net -t admin -r provider-router -N $NEUTRON_DNS private $NEUTRON_FIXED_NET_CIDR
 
 #Configure the default security group to allow ICMP and SSH
-#openstack security group rule create --proto icmp default
-#openstack security group rule create --proto tcp --dst-port 1:65535 default
-#openstack security group rule create --proto udp --dst-port 1:65535 default
-#openstack security group rule create --proto "132" --dst-port 1:65535 default
+openstack security group rule create --proto icmp default
+openstack security group rule create --proto tcp --dst-port 1:65535 default
+openstack security group rule create --proto udp --dst-port 1:65535 default
+openstack security group rule create --proto "132" --dst-port 1:65535 default
 
 #Upload a default SSH key
 openstack keypair create  --public-key ~/.ssh/id_rsa.pub default
@@ -65,11 +65,9 @@ neutron quota-update --security-group 100 --security-group-rule 500
 #glance image-create --name=ubuntu_16.04 --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/xenial-server-cloudimg-amd64-disk1.img
 #glance image-create --name=ubuntu_14.04 --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/trusty-server-cloudimg-amd64-disk1.img
 glance image-create --name=cirros_0.3.5 --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/cirros-0.3.5-x86_64-disk.img
-#glance image-create --name=centos_7 --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/CentOS-7-x86_64-GenericCloud.qcow2
-#glance image-create --name=OpenEPC_powerdns_ub_xenial --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/OpenEPC_powerdns_ub_xenial.qcow2
-#glance image-create --name=OpenEPC_ub_xenial --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/OpenEPC_ub_xenial.qcow2
-glance image-create --name=openepc --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/openepc-072817.qcow2
+#glance image-create --name=openepc --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/openepc-072817.qcow2
+
 ## OPNFV CI/CD Setup Add-on Part:
-#sudo cp nova.rc /home/jenkins/joid_config/admin-openrc
+sudo cp nova.rc /home/jenkins/joid_config/admin-openrc
 
 exit
