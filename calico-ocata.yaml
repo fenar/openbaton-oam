@@ -13,7 +13,7 @@ services:
       - "0"
   nova-compute:
     charm: "cs:nova-compute"
-    num_units: 8
+    num_units: 6
     options:
       enable-live-migration: true
       enable-resize: true
@@ -30,8 +30,6 @@ services:
       - "4"
       - "5"
       - "6"
-      - "7"
-      - "8"
   etcd:
     charm: "cs:etcd"
     num_units: 1
@@ -123,7 +121,7 @@ services:
       "gui-x": "500"
       "gui-y": "-250"
     to:
-      - lxd:7
+      - lxd:0
   rabbitmq-server:
     charm: "cs:rabbitmq-server"
     num_units: 1
@@ -131,7 +129,7 @@ services:
       "gui-x": "500"
       "gui-y": "250"
     to:
-      - lxd:8
+      - lxd:1
   easyrsa:
     charm: "cs:~containers/easyrsa"
     num_units: 1
@@ -139,7 +137,7 @@ services:
       "gui-x": "500"
       "gui-y": "250"
     to:
-      - lxd:4
+      - lxd:2
   openbaton:
     charm: "./openbaton-charm"
     series: trusty
@@ -149,7 +147,7 @@ services:
       "gui-x": "0"
       "gui-y": "0"
     to:
-      - "9"
+      - lxd:3
 relations:
   - - "nova-cloud-controller:image-service"
     - "glance:image-service"
@@ -229,12 +227,3 @@ machines:
   "6":
     series: xenial
     constraints: arch=amd64 tags=physical
-  "7":
-    series: xenial
-    constraints: arch=amd64 tags=physical
-  "8":
-    series: xenial
-    constraints: arch=amd64 tags=physical
-  "9":
-    series: trusty
-    constraints: arch=amd64 tags=virtual

@@ -11,7 +11,7 @@ dpkg -l $PKGS > /dev/null || sudo apt-get install -y $PKGS
 
 NEUTRON_DNS="172.27.$((obnum+3)).254"
 
-NEUTRON_EXT_NET_NAME="extnet"
+NEUTRON_EXT_NET_NAME="ext-net"
 NEUTRON_EXT_NET_GW="172.27.$((obnum+3)).254"
 NEUTRON_EXT_NET_CIDR="172.27.$((obnum+2)).0/23"
 NEUTRON_EXT_NET_FLOAT_RANGE_START="172.27.$((obnum+3)).150"
@@ -39,7 +39,7 @@ source nova.rc
 ./neutron-ext-net -g $NEUTRON_EXT_NET_GW -c $NEUTRON_EXT_NET_CIDR  -f $NEUTRON_EXT_NET_FLOAT_RANGE_START:$NEUTRON_EXT_NET_FLOAT_RANGE_END $NEUTRON_EXT_NET_NAME
 
 #PRIVATE NET
-./neutron-tenant-net -t admin -r provider-router -N $NEUTRON_DNS private $NEUTRON_FIXED_NET_CIDR
+#./neutron-tenant-net -t admin -r provider-router -N $NEUTRON_DNS private $NEUTRON_FIXED_NET_CIDR
 
 #Configure the default security group to allow ICMP and SSH
 #openstack security group rule create --proto icmp default
@@ -61,14 +61,14 @@ openstack quota  set --ram 204800 --cores 200 --instances 100 admin
 neutron quota-update --security-group 100 --security-group-rule 500 
 
 #Upload vnf images to glance
-glance image-create --name=openims --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/openims.img
+#glance image-create --name=openims --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/openims.img
 #glance image-create --name=ubuntu_16.04 --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/xenial-server-cloudimg-amd64-disk1.img
 #glance image-create --name=ubuntu_14.04 --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/trusty-server-cloudimg-amd64-disk1.img
 glance image-create --name=cirros_0.3.5 --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/cirros-0.3.5-x86_64-disk.img
 #glance image-create --name=centos_7 --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/CentOS-7-x86_64-GenericCloud.qcow2
-glance image-create --name=OpenEPC_powerdns_ub_xenial --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/OpenEPC_powerdns_ub_xenial.qcow2
-glance image-create --name=OpenEPC_ub_xenial --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/OpenEPC_ub_xenial.qcow2
-
+#glance image-create --name=OpenEPC_powerdns_ub_xenial --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/OpenEPC_powerdns_ub_xenial.qcow2
+#glance image-create --name=OpenEPC_ub_xenial --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/OpenEPC_ub_xenial.qcow2
+glance image-create --name=openepc --visibility=public --container-format=ovf --disk-format=qcow2 <  /srv/data/openepc-072817.qcow2
 ## OPNFV CI/CD Setup Add-on Part:
 #sudo cp nova.rc /home/jenkins/joid_config/admin-openrc
 
