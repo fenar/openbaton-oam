@@ -42,7 +42,6 @@ services:
       - lxd:5
       - lxd:6
       - lxd:7
-      - lxd:8
   nova-compute-kvm:
     charm: "cs:nova-compute"
     series: xenial
@@ -64,7 +63,6 @@ services:
       - "5"
       - "6"
       - "7"
-      - "8"
   ceph-osd:
     charm: "cs:ceph-osd"
     series: xenial
@@ -82,7 +80,6 @@ services:
       - "5"
       - "6"
       - "7"
-      - "8"
   ntp:
     annotations:
       gui-x: '1000'
@@ -214,7 +211,7 @@ services:
       "gui-x": "0"
       "gui-y": "0"
     to:
-      - "9"
+      - lxd:7
 relations:
 - - nova-compute-kvm:amqp
   - rabbitmq-server:amqp
@@ -321,9 +318,3 @@ machines:
   "7":
     series: xenial
     constraints: "arch=amd64 tags=physical"
-  "8":
-    series: xenial
-    constraints: "arch=amd64 tags=physical"
-  "9":
-    series: trusty
-    constraints: "arch=amd64 tags=virtual"

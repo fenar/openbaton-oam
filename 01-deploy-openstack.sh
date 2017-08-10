@@ -11,14 +11,38 @@ if [ ! -d openbaton-charm ]; then
   sleep 10s
 fi
 
-if [[ ${model:0:9} == "openstack" ]]; then
-	juju switch openstack
-     	juju deploy calico-ocata.yaml
+echo "Available Openstack Deployment Options:"
+echo "(1) -> Openstack Newton with OVS"
+echo "(2) -> Openstack Ocata with Calico"
+echo "Enter Your Choice: "
+read -n 2 r
+if [ "$r" = "1" ] ; then
+        echo "Deploying Openstack Newton with OVS"
+        if [[ ${model:0:9} == "openstack" ]]; then
+                juju switch openstack
+                juju deploy openstack-newton-openbaton.yaml
+        else
+                juju add-model openstack
+        	juju switch openstack
+        	juju deploy openstack-newton-openbaton.yaml
+        fi
+elif [ "$r" = "2" ] ; then
+        echo "Deploying Openstack Ocata with Calico"
+        if [ ! -d charm-neutron-api ]; then
+        	git clone -b ocata-support https://github.com/projectcalico/charm-neutron-api.git
+        fi
+	if [[ ${model:0:9} == "openstack" ]]; then
+	  	juju switch openstack
+     		juju deploy calico-ocata.yaml
+	else
+		juju add-model openstack
+		juju switch openstack
+     		juju deploy calico-ocata.yaml
+	fi
 else
-	juju add-model openstack
-	juju switch openstack
-     	juju deploy calico-ocata.yaml
+        echo "Incorrect Release Selection!"
+        exit
 fi
-
 echo "Login to the juju-gui to see status or use juju status"
 juju gui --no-browser --show-credentials
+
