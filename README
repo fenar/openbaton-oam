@@ -63,3 +63,28 @@ Order of Execution:
 (1) In order to pass sctp traffic following kernel modules needs to be loaded:
 sudo modprobe nf_conntrack_proto_sctp
 sudo modprobe nf_nat_proto_sctp 
+
+(2) Create User with All Access in mme & hss mysql db:
+CREATE USER 'admin'@'localhost' IDENTIFIED BY 'admin';
+GRANT ALL PRIVILEGES ON * . * TO 'admin'@'localhost'; 
+FLUSH PRIVILEGES;
+sudo service mysql restart
+Testing: mysql -h 192.168.214.9 -u admin -p mme_db
+
+(2) SPGW IPTABLES
+List POSTPROCESSING Rules: iptables -t nat -v -L -n --line-number 
+Delete POSTPROCESSING Rules: iptables -t nat -D POSTROUTING {number-here}
+ADD POSTPROCESING RULE with SNAT: iptables -t nat -A POSTROUTING -o net_d -j SNAT --to 192.168.137.6
+sudo sysctl -w net.ipv4.ip_forward=1
+sudo iptables -A FORWARD -i net_d -j ACCEPT
+sudo iptables -t nat -A POSTROUTING -o net_d -j MASQUERADE
+
+sudo iptables -P INPUT ACCEPT
+sudo iptables -P FORWARD ACCEPT
+sudo iptables -P OUTPUT ACCEPT
+
+sudo iptables -t nat -F
+sudo iptables -t mangle -F
+sudo iptables -F
+sudo iptables -X
+
